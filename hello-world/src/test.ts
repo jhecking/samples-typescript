@@ -1,3 +1,5 @@
+import assert from 'assert'
+
 import { TestWorkflowEnvironment } from '@temporalio/testing'
 import { Worker, DefaultLogger, Runtime } from '@temporalio/worker'
 import { WorkflowClient } from '@temporalio/client'
@@ -25,13 +27,16 @@ async function test () {
     connection: env.connection,
   })
 
-  await worker.runUntil(async () => {
-    await client.start(example, {
+  const result = await worker.runUntil(async () => {
+    return client.execute(example, {
       args: ['Temporal'],
       taskQueue: 'hello-world',
       workflowId: 'test-workflow'
     })
   })
+
+  assert.equal(result, 'Hello, Temporal!')
+  
   await env.teardown()
 }
 
