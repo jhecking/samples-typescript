@@ -1,7 +1,7 @@
 import { Connection, Client } from '@temporalio/client'
 import { example } from './workflows'
 import { nanoid } from 'nanoid'
-import { ClientContextInterceptor } from './interceptors'
+import { ClientContextInterceptor } from './clientInterceptors'
 
 async function run() {
   const connection = await Connection.connect({ address: 'localhost:7233' })
