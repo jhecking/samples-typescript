@@ -12,17 +12,17 @@ async function run() {
     interceptors: { workflow: [new ClientContextInterceptor()] },
   })
 
-  const org = 'borneo'
-  await AppContext.run({ org }, async () => {
-    const handle = await client.workflow.start(example, {
+  const orgs = ['borneo', 'securezapp', 'temporal']
+  const workflows = orgs.map((org, idx) => AppContext.run({ org }, async () => {
+    return client.workflow.execute(example, {
       taskQueue: 'hello-world',
-      args: ['Temporal'],
+      args: [org, orgs.length - idx],
       workflowId: 'workflow-' + nanoid(),
     })
-    console.log(`Started workflow ${handle.workflowId}`)
+  }))
 
-    console.log(await handle.result()) // Hello, Temporal!
-  })
+  const results = await Promise.all(workflows)
+  console.log(results)
 }
 
 run().catch((err) => {

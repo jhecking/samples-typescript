@@ -5,19 +5,20 @@ import {
   WorkflowExecuteInput,
   WorkflowOutboundCallsInterceptor,
 } from '@temporalio/workflow'
+import { Payload } from '@temporalio/common'
 
-let context: Uint8Array | null | undefined
+let contextPayload: Payload
 
 class WorkflowInboundContextInterceptor implements WorkflowInboundCallsInterceptor {
   async execute(input: WorkflowExecuteInput, next: any) {
-    context = input.headers.context?.data
+    contextPayload = input.headers.context
     return next(input)
   }
 }
 
 class WorkflowOutboundContextInterceptor implements WorkflowOutboundCallsInterceptor {
   async scheduleActivity(input: ActivityInput, next: any) {
-    input.headers.context = { data: context }
+    input.headers.context = contextPayload
     return next(input)
   }
 }

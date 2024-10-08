@@ -5,7 +5,7 @@ const { greet } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
 })
 
-export async function example(name: string): Promise<string> {
-  await sleep(1000)
+export async function example(name: string, delay: number): Promise<string> {
+  await sleep(delay * 1000)
   return await greet(name)
 }
