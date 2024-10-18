@@ -15,17 +15,24 @@ async function run() {
     },
   })
 
-  const orgs = ['borneo', 'securezapp', 'temporal']
-  const workflows = orgs.map((org, idx) => AppContext.run({ org }, async () => {
-    return client.workflow.execute(example, {
-      taskQueue: 'hello-world',
-      args: [org, orgs.length - idx],
-      workflowId: 'workflow-' + nanoid(),
+  await AppContext.run({ org: 'temporal' }, async () => {
+    await client.schedule.create({
+      scheduleId: 'schedule-' + nanoid(),
+      spec: {
+        intervals: [{ every: '10s' }],
+      },
+      action: {
+        type: 'startWorkflow',
+        workflowType: example,
+        workflowId: 'workflow-' + nanoid(),
+        taskQueue: 'hello-world',
+        args: ['World', 0],
+      },
+      state: {
+        remainingActions: 3,
+      }
     })
-  }))
-
-  const results = await Promise.all(workflows)
-  console.log(results)
+  })
 }
 
 run().catch((err) => {
