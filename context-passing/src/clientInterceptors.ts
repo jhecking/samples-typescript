@@ -1,8 +1,15 @@
-import { CreateScheduleInput, CreateScheduleOutput, ScheduleClientInterceptor, WorkflowClientInterceptor, WorkflowStartInput } from '@temporalio/client'
+import {
+  CreateScheduleInput,
+  CreateScheduleOutput,
+  Next,
+  ScheduleClientInterceptor,
+  WorkflowClientInterceptor,
+  WorkflowStartInput,
+} from '@temporalio/client'
 import { AppContext } from './appContext'
 
 export class WorkflowClientContextPropagator implements WorkflowClientInterceptor {
-  async start(input: WorkflowStartInput, next: any): Promise<string> {
+  async start(input: WorkflowStartInput, next: Next<WorkflowClientInterceptor, 'start'>): Promise<string> {
     const context = AppContext.current()
     console.log('Outbound client context:', context)
     input.headers['context'] = AppContext.toPayload(context)
@@ -11,7 +18,10 @@ export class WorkflowClientContextPropagator implements WorkflowClientIntercepto
 }
 
 export class ScheduleClientContextPropagator implements ScheduleClientInterceptor {
-  async create(input: CreateScheduleInput, next: any): Promise<CreateScheduleOutput> {
+  async create(
+    input: CreateScheduleInput,
+    next: Next<ScheduleClientInterceptor, 'create'>,
+  ): Promise<CreateScheduleOutput> {
     const context = AppContext.current()
     console.log('Outbound client context:', context)
     input.headers['context'] = AppContext.toPayload(context)

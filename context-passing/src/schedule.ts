@@ -11,7 +11,7 @@ async function run() {
     connection,
     interceptors: {
       workflow: [new WorkflowClientContextPropagator()],
-      schedule: [new ScheduleClientContextPropagator()]
+      schedule: [new ScheduleClientContextPropagator()],
     },
   })
 
@@ -30,7 +30,7 @@ async function run() {
       },
       state: {
         remainingActions: 3,
-      }
+      },
     })
   })
 }
